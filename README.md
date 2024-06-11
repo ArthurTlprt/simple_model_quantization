@@ -3,6 +3,11 @@
 Dans ce repo, nous testons sur un modèle simple les différentes méthodes de quantification de modèle, via ses différentes implémentations.
 Le modèle doit classifier des images du dataset FashionMNIST.
 
+Nota Bene:
+- Faire attention au device sur lequel est executé le modèle + les données. (cuda pour l'entrainement, et cpu pour l'évaluation)
+- Veiller à ce que les paramètres du model quantifié préparé soient bien ceux donnés à l'optimizer, et non ceux du modèle de base.
+- Des fonctions comme nn.Softmax ne sont implémentées
+
 ### Le modèle simple:
 
 Voici le [modèle simple](classifier_training.py) sur lequel on vient appliquer les différentes méthodes de quantification.
@@ -37,12 +42,12 @@ self.model = nn.Sequential(
 ### 3. Training aware quantization
 
 [Notebook ici](eager_mode_qat.ipynb)
-Le modèle ne converge pas pour le moment avec ce mode.
-
-
-Todo
 
 ## Torch FX Graph implementation
+
+### 4. Training aware quantization
+
+[Notebook ici](fx_qat.ipynb)
 
 ## ONNX
 
