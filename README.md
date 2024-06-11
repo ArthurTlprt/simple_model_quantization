@@ -6,7 +6,7 @@ Le modèle doit classifier des images du dataset FashionMNIST.
 Nota Bene:
 - Faire attention au device sur lequel est executé le modèle + les données. (cuda pour l'entrainement, et cpu pour l'évaluation)
 - Veiller à ce que les paramètres du model quantifié préparé soient bien ceux donnés à l'optimizer, et non ceux du modèle de base.
-- Des fonctions comme nn.Softmax ne sont implémentées
+- Des fonctions comme nn.Softmax ne sont pas implémentées dans le eager mode, alors que dans FX Graph oui.
 
 ### Le modèle simple:
 
