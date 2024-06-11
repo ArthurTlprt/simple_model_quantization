@@ -37,12 +37,12 @@ self.model = nn.Sequential(
 ### 3. Training aware quantization
 
 [Notebook ici](eager_mode_qat.ipynb)
-Le modèle ne converge pas pour le moment avec ce mode.
-
-
-Todo
 
 ## Torch FX Graph implementation
+
+### 4. Training aware quantization
+
+[Notebook ici](fx_qat.ipynb)
 
 ## ONNX
 
