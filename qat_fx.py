@@ -206,6 +206,27 @@ def model_equivalence(model_1, model_2, device, rtol=1e-05, atol=1e-08, num_test
 
     return True
 
+class Classifier(torch.nn.Module):
+
+    def __init__(self):
+        super().__init__()
+        self.model = nn.Sequential(
+            nn.Conv2d(3, 8, 3, stride=2),
+            nn.ReLU(),
+            nn.Conv2d(8, 8*8, 3, stride=2),
+            nn.ReLU(),
+            nn.AvgPool2d(3, 2),
+            nn.Flatten(),
+            nn.Dropout(),
+            nn.Linear(576, 128), 
+            nn.Dropout(),
+            nn.Linear(128, 10), 
+            nn.Softmax()
+        )
+
+    def forward(self, x):
+        return self.model(x)
+
 def main():
 
     num_classes = 10
@@ -219,13 +240,14 @@ def main():
     quantized_model_filepath = os.path.join(model_dir, quantized_model_filename)
 
     # Create an untrained model.
-    model = model = resnet18(num_classes=num_classes, pretrained=False)
+    # model = model = resnet18(num_classes=num_classes, pretrained=False)
+    model = Classifier()
 
     train_loader, test_loader = prepare_dataloader(num_workers=16, train_batch_size=128, eval_batch_size=512)
     
     # Train model.
     print("Training Model...")
-    model = train_model(model=model, train_loader=train_loader, test_loader=test_loader, device=cuda_device, learning_rate=1e-1, num_epochs=20)
+    model = train_model(model=model, train_loader=train_loader, test_loader=test_loader, device=cuda_device, learning_rate=1e-3, num_epochs=200)
     # Save model.
     save_model(model=model, model_dir=model_dir, model_filename=model_filename)
 
