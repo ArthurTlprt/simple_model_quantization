@@ -8,6 +8,16 @@ Nota Bene:
 - Veiller à ce que les paramètres du model quantifié préparé soient bien ceux donnés à l'optimizer, et non ceux du modèle de base.
 - Des fonctions comme nn.Softmax ne sont pas implémentées dans le eager mode, alors que dans FX Graph oui.
 
+Ressource FP8:
+- FP8 FORMATS FOR DEEP LEARNING: https://arxiv.org/pdf/2209.05433
+- EFFICIENT POST-TRAINING QUANTIZATION WITH FP8 FORMATS: https://arxiv.org/pdf/2309.14592
+- FP8 Quantization: The Power of the Exponent: https://arxiv.org/pdf/2208.09225
+- https://docs.nvidia.com/deeplearning/transformer-engine/user-guide/examples/fp8_primer.html
+- https://github.com/pytorch/FBGEMM/blob/e5d0c9448774e6bc577e7f210ecbec56b7a69f10/fbgemm_gpu/experimental/gemm/triton_gemm/fp8_gemm.py
+- https://github.com/Qualcomm-AI-research/FP8-quantization/tree/main
+
+
+
 ### Le modèle simple:
 
 Voici le [modèle simple](classifier_training.py) sur lequel on vient appliquer les différentes méthodes de quantification.
