@@ -7,6 +7,8 @@ Nota Bene:
 - Faire attention au device sur lequel est executé le modèle + les données. (cuda pour l'entrainement, et cpu pour l'évaluation)
 - Veiller à ce que les paramètres du model quantifié préparé soient bien ceux donnés à l'optimizer, et non ceux du modèle de base.
 - Des fonctions comme nn.Softmax ne sont pas implémentées dans le eager mode, alors que dans FX Graph oui.
+- Désactivation du EMA: impact sur les poids
+- Désactivation du AMP: idem
 
 Ressource FP8:
 - FP8 FORMATS FOR DEEP LEARNING: https://arxiv.org/pdf/2209.05433
