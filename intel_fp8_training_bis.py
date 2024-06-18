@@ -1,0 +1,108 @@
+import torch
+from intel_extension_for_pytorch.quantization.fp8 import (
+    fp8_autocast,
+    DelayedScaling,
+    Format,
+    prepare_fp8,
+)
+import torch.nn as nn
+from torch.utils.data import DataLoader
+from torchvision import datasets
+from torchvision.transforms import ToTensor
+
+
+class Classifier(torch.nn.Module):
+
+    def __init__(self):
+        super().__init__()
+        self.model = nn.Sequential(
+            nn.Conv2d(1, 8, 3, stride=2),
+            nn.ReLU(),
+            nn.Conv2d(8, 8*8, 3, stride=2),
+            nn.ReLU(),
+            nn.AvgPool2d(3, 2),
+            nn.Flatten(),
+            nn.Dropout(),
+            nn.Linear(256, 128), 
+            nn.Dropout(),
+            nn.Linear(128, 10), 
+            nn.Softmax()
+        )
+
+    def forward(self, x):
+        return self.model(x)
+    
+
+def train(dataloader, model, loss_fn, optimizer, backend="cuda"):
+    size = len(dataloader.dataset)
+    model.train()
+    for batch, (X, y) in enumerate(dataloader):
+        X, y = X.to(backend), y.to(backend)
+
+        # with fp8_autocast(enabled=True, fp8_recipe=DelayedScaling(fp8_format=Format.E4M3), device="cpu"):
+        with fp8_autocast(enabled=True, fp8_recipe=DelayedScaling(fp8_format=Format.E5M2), device="cpu"):
+            pred = model(X)
+            loss = loss_fn(pred, y)
+            optimizer.zero_grad()
+            y.mean().backward()
+            optimizer.step()
+
+        if batch % 100 == 0:
+            loss, current = loss.item(), (batch + 1) * len(X)
+            print(f"loss: {loss:>7f}  [{current:>5d}/{size:>5d}]")
+
+
+def test(dataloader, model, loss_fn, backend="cuda"):
+    size = len(dataloader.dataset)
+    num_batches = len(dataloader)
+    model.eval()
+    test_loss, correct = 0, 0
+    with torch.no_grad():
+        for X, y in dataloader:
+            X, y = X.to(backend), y.to(backend)
+            pred = model(X)
+            test_loss += loss_fn(pred, y).item()
+            correct += (pred.argmax(1) == y).type(torch.float).sum().item()
+    test_loss /= num_batches
+    correct /= size
+    print(f"Test Error: \n Accuracy: {(100*correct):>0.1f}%, Avg loss: {test_loss:>8f} \n")
+
+
+if __name__ == "__main__":
+
+    model = Classifier().to("cpu")
+
+    training_data = datasets.FashionMNIST(
+        root="data",
+        train=True,
+        download=True,
+        transform=ToTensor(),
+    )
+
+    # Download test data from open datasets.
+    test_data = datasets.FashionMNIST(
+        root="data",
+        train=False,
+        download=True,
+        transform=ToTensor(),
+    )
+
+    loss_fn = nn.CrossEntropyLoss()
+    optimizer = torch.optim.SGD(model.parameters(), lr=1e-3)
+
+    batch_size = 64
+
+    # Create data loaders.
+    train_dataloader = DataLoader(training_data, batch_size=batch_size)
+    test_dataloader = DataLoader(test_data, batch_size=batch_size)
+
+    fp8_model, ipex_optimizer = prepare_fp8(model, optimizer)
+
+    for i in range(2):
+        train(train_dataloader, fp8_model, loss_fn, ipex_optimizer, backend="cpu")
+        # test(test_dataloader, fp8_model, loss_fn, backend="cpu")
+
+    torch.save(fp8_model.state_dict(), "intel_fp8_model_bis.pt")
+
+    print(fp8_model)
+    

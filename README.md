@@ -63,8 +63,40 @@ self.model = nn.Sequential(
 
 ## Intel Pytorch Extension
 
+### 5.
+
 [Notebook](intel_fp8_training.ipynb) montrant un apprentissage d'un modèle en FP8.
 
+### 6.
+
+[Script](intel_convert_to_fp8.py) convertissant un modèle FP32 en DP8. En réalité, il semblerait que seule les couches denses puissent être converties pour le moment. 
+La documentation indique "Use prepare_fp8 to convert modules to FP8 modules (e.g, convert nn.Linear to FP8Linear) in the model".
+
+```text
+Classifier(
+  (model): Sequential(
+    (0): Conv2d(1, 8, kernel_size=(3, 3), stride=(2, 2))
+    (1): ReLU()
+    (2): Conv2d(8, 64, kernel_size=(3, 3), stride=(2, 2))
+    (3): ReLU()
+    (4): AvgPool2d(kernel_size=3, stride=2, padding=0)
+    (5): Flatten(start_dim=1, end_dim=-1)
+    (6): Dropout(p=0.5, inplace=False)
+    (7): FP8Linear(in_features=256, out_features=128, bias=True)
+    (8): Dropout(p=0.5, inplace=False)
+    (9): FP8Linear(in_features=128, out_features=10, bias=True)
+    (10): Softmax(dim=None)
+  )
+)
+```
+
+### 7. 
+
+Apprentissage bis en FP8: [script](intel_fp8_training_bis.py)
+
+```bash
+RuntimeError: Running FP8 on not supported platform.
+```
 ## ONNX
 
 ## Nvidia TensorRT
