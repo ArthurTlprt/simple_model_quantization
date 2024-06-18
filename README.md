@@ -41,7 +41,6 @@ self.model = nn.Sequential(
         )
 ```
 
-
 ## Torch Eager Mode implementation
 
 ### 1. Post training static quantization
@@ -61,6 +60,10 @@ self.model = nn.Sequential(
 ### 4. Training aware quantization
 
 [Notebook ici](fx_qat.ipynb)
+
+## Intel Pytorch Extension
+
+[Notebook](intel_fp8_training.ipynb) montrant un apprentissage d'un modèle en FP8.
 
 ## ONNX
 
