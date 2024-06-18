@@ -17,6 +17,7 @@ Ressource FP8:
 - https://docs.nvidia.com/deeplearning/transformer-engine/user-guide/examples/fp8_primer.html
 - https://github.com/pytorch/FBGEMM/blob/e5d0c9448774e6bc577e7f210ecbec56b7a69f10/fbgemm_gpu/experimental/gemm/triton_gemm/fp8_gemm.py
 - https://github.com/Qualcomm-AI-research/FP8-quantization/tree/main
+- Doc Intel sur l'utilisation du FP8: https://github.com/intel/intel-extension-for-pytorch/tree/eda7a7c42df6f9a64e0de9c2b69304ee02f2c32a/intel_extension_for_pytorch/quantization/fp8
 
 
 
